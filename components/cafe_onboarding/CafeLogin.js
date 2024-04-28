@@ -1,6 +1,8 @@
-import { Text, Button, TextInput, View, StyleSheet, Touchable, TouchableOpacity } from 'react-native'
+import { Text, Button, TextInput, View, StyleSheet, Touchable, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
 import { useEffect, useState } from 'react'
-import { Entypo } from '@expo/vector-icons';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase';
+
 
 const CafeLogin = ({navigation}) => {
 
@@ -11,6 +13,23 @@ const CafeLogin = ({navigation}) => {
 
     // }, []);
 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleLogin = () => {
+
+        signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            navigation.navigate('Cafe Stack');
+            // ...
+        }).catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+        });
+        
+    }
+
 
     const handleToSignup = () => {
         navigation.navigate('Cafe Signup');
@@ -18,21 +37,23 @@ const CafeLogin = ({navigation}) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.topContainer}>
-                <Text>Icon</Text>
-            </View>
-            <View style={styles.bottomContainer}>
-                <View style={styles.loginInputs}>
-                    <TextInput style={styles.textInput} placeholder='Email' />
-                    <TextInput style={styles.textInput} placeholder='Password' />
+            <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+                <View style={styles.topContainer}>
+                    <Text>Icon</Text>
                 </View>
-                <TouchableOpacity style={styles.navBtn} onPress={() => alert('Login pressed')}>
-                    <Text style={styles.btnText}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleToSignup}>
-                    <Text>Signup</Text>
-                </TouchableOpacity>
-            </View>
+                <View style={styles.bottomContainer}>
+                    <View style={styles.loginInputs}>
+                        <TextInput style={styles.textInput} placeholder='Email' onChangeText={setEmail} />
+                        <TextInput style={styles.textInput} placeholder='Password' onChangeText={setPassword} />
+                    </View>
+                    <TouchableOpacity style={styles.navBtn} onPress={handleLogin}>
+                        <Text style={styles.btnText}>Login</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleToSignup}>
+                        <Text>Signup</Text>
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         </View>
     )
 }

@@ -1,5 +1,7 @@
 import { Text, Button, TextInput, View, StyleSheet, Touchable, TouchableOpacity } from 'react-native'
 import { useState } from 'react'
+import { auth } from '../../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const UserSignup = ({navigation}) => {
 
@@ -12,7 +14,17 @@ const UserSignup = ({navigation}) => {
     const handleSignup = () => {
 
         if ( password == cPassword && email == cEmail) {
-            // login
+            // signup
+            createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+                // Signed up 
+                const user = userCredential.user;
+                // ...
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // ..
+            });
+
             navigation.goBack();
         } else {
             alert('Field error');
@@ -27,10 +39,10 @@ const UserSignup = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.topContainer}>
-                <TextInput style={styles.textInput} placeholder='Email' />
-                <TextInput style={styles.textInput} placeholder='Confirm email' />
-                <TextInput style={styles.textInput} placeholder='Password' />
-                <TextInput style={styles.textInput} placeholder='Confirm password' />
+                <TextInput style={styles.textInput} placeholder='Email' onChangeText={setEmail} />
+                <TextInput style={styles.textInput} placeholder='Confirm email' onChangeText={setCEmail} />
+                <TextInput style={styles.textInput} placeholder='Password' onChangeText={setPassword} />
+                <TextInput style={styles.textInput} placeholder='Confirm password' onChangeText={setCPassword} />
             </View>
             <View style={styles.bottomContainer}>
                 <TouchableOpacity style={styles.navBtn} onPress={handleSignup}>
